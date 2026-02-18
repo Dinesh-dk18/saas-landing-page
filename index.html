@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Momentum - Build Better Habits</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@latest/build/spline-viewer.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --dark-bg: #0b0b0f;
+            --dark-secondary: #1a1a2e;
+            --text-white: #ffffff;
+            --text-gray: #b0b0b0;
+            --purple: #8b5cf6;
+            --blue: #3b82f6;
+            --cyan: #06b6d4;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            margin: 0;
+            padding: 0;
+            line-height: 1;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-white);
+            overflow-x: hidden;
+            perspective: 1200px;
+            margin: 0;
+            padding: 0;
+            line-height: 1;
+        }
+
+        @keyframes noise {
+            0% { background-position: 0 0; }
+            100% { background-position: 100% 100%; }
+        }
+
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' seed='2' /%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            animation: noise 8s steps(10) infinite;
+        }
+
+        /* Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            margin: 0;
+            display: block;
+            z-index: 999;
+            padding: 14px 40px;
+            backdrop-filter: blur(15px);
+            background: rgba(11, 11, 15, 0.45);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        .nav-container {
+            position: relative;
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            line-height: 1;
+        }
+
+        .logo {
+            position: absolute;
+            left: 0;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+            color: var(--text-white);
+            line-height: 1;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+            margin: 0;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-gray);
+            font-size: 13px;
+            font-weight: 400;
+            transition: color 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-white);
+        }
+
+        .nav-buttons {
+            position: absolute;
+            right: 0;
+            display: flex;
+            gap: 12px;
+            line-height: 1;
+        }
+
+        .btn-nav {
+            padding: 8px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(8px);
+            color: var(--text-white);
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1;
+        }
+
+        .btn-nav:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            nav {
+                padding: 12px 20px;
+            }
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 120px 40px 100px;
+            margin-top: 0;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--dark-bg);
+            perspective: 1000px;
+        }
+
+        /* Atmospheric glow layers */
+        .glow-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .glow-1 {
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: 0;
+            will-change: transform;
+            transition: transform 0.1s ease-out;
+            animation: pulseGlow 8s ease-in-out infinite;
+        }
+
+        .glow-2 {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            filter: blur(100px);
+            pointer-events: none;
+            animation: pulseGlow 10s ease-in-out infinite reverse;
+        }
+
+        .glow-3 {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            filter: blur(120px);
+            pointer-events: none;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                opacity: 0.5;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+        }
+
+        @keyframes floatCard {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-30px);
+            }
+        }
+
+        .hero-wrapper {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 80px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .hero-content {
+            flex: 1;
+            max-width: 500px;
+        }
+
+        /* 3D Card Container */
+        .card-container {
+            flex: 1;
+            max-width: 400px;
+            height: 500px;
+            perspective: 1200px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.5s forwards;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .card-container::before {
+            content: '';
+            position: absolute;
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, transparent 70%);
+            filter: blur(80px);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 76px;
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: -2.2px;
+            margin-bottom: 40px;
+            color: var(--text-white);
+            opacity: 0;
+            animation: fadeInDown 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s forwards;
+            text-shadow: 0 20px 60px rgba(139, 92, 246, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            font-weight: 300;
+            color: var(--text-gray);
+            margin-bottom: 48px;
+            line-height: 1.8;
+            letter-spacing: 0.3px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.4s forwards;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.6s forwards;
+        }
+
+        .btn-hero {
+            padding: 16px 44px;
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            color: var(--text-white);
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-hero:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(139, 92, 246, 0.25);
+        }
+
+        .btn-hero-primary {
+            background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%);
+            border-color: transparent;
+        }
+
+        .btn-hero-primary:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 16px 56px rgba(139, 92, 246, 0.4);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 140px 40px;
+            background: linear-gradient(180deg, var(--dark-bg) 0%, var(--dark-secondary) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 100px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 72px;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -2px;
+            margin-bottom: 24px;
+            color: var(--text-white);
+        }
+
+        .section-header p {
+            font-size: 18px;
+            color: var(--text-gray);
+            font-weight: 300;
+            line-height: 1.7;
+        }
+
+        .features-grid {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-card {
+            padding: 48px 40px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s ease;
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(139, 92, 246, 0.4);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(139, 92, 246, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 24px;
+        }
+
+        .feature-card h3 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-white);
+        }
+
+        .feature-card p {
+            font-size: 15px;
+            color: var(--text-gray);
+            line-height: 1.8;
+            font-weight: 300;
+        }
+
+        /* Pricing Section */
+        .pricing {
+            padding: 140px 40px;
+            background: var(--dark-bg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-cards {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .pricing-card {
+            padding: 56px 48px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pricing-card.featured {
+            background: rgba(139, 92, 246, 0.1);
+            border: 2px solid rgba(139, 92, 246, 0.4);
+            transform: scale(1.05);
+            box-shadow: 0 20px 60px rgba(139, 92, 246, 0.25);
+        }
+
+        .pricing-card:hover:not(.featured) {
+            border-color: rgba(139, 92, 246, 0.3);
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-8px);
+        }
+
+        .pricing-badge {
+            display: inline-block;
+            width: fit-content;
+            background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .pricing-card h3 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-white);
+        }
+
+        .pricing-price {
+            font-size: 56px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--purple) 0%, var(--cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .pricing-period {
+            font-size: 14px;
+            color: var(--text-gray);
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 48px;
+            flex-grow: 1;
+        }
+
+        .pricing-features li {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+            color: var(--text-gray);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 300;
+        }
+
+        .pricing-features li::before {
+            content: '✓';
+            color: var(--cyan);
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .pricing-card .btn-pricing {
+            width: 100%;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            color: var(--text-white);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .pricing-card .btn-pricing:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .pricing-card.featured .btn-pricing {
+            background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%);
+            border-color: transparent;
+        }
+
+        .pricing-card.featured .btn-pricing:hover {
+            box-shadow: 0 12px 40px rgba(139, 92, 246, 0.4);
+            transform: translateY(-4px);
+        }
+
+        /* CTA Section */
+        .cta {
+            padding: 140px 40px;
+            background: var(--dark-bg);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+            top: -300px;
+            right: -300px;
+            filter: blur(80px);
+            pointer-events: none;
+            border-radius: 50%;
+        }
+
+        .cta-content {
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 72px;
+            font-weight: 800;
+            letter-spacing: -2px;
+            margin-bottom: 24px;
+            color: var(--text-white);
+            line-height: 1.1;
+        }
+
+        .cta p {
+            font-size: 18px;
+            color: var(--text-gray);
+            margin-bottom: 48px;
+            font-weight: 300;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark-secondary);
+            padding: 80px 40px 50px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 56px;
+            margin-bottom: 60px;
+        }
+
+        .footer-section h4 {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-white);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section a {
+            color: var(--text-gray);
+            text-decoration: none;
+            font-size: 13px;
+            display: block;
+            padding: 8px 0;
+            transition: color 0.3s ease;
+            font-weight: 300;
+        }
+
+        .footer-section a:hover {
+            color: var(--text-white);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            flex-wrap: wrap;
+            gap: 24px;
+            font-size: 12px;
+            color: var(--text-gray);
+        }
+
+        @media (max-width: 1024px) {
+            .hero h1 {
+                font-size: 80px;
+            }
+
+            .hero-wrapper {
+                flex-direction: column;
+                gap: 60px;
+            }
+
+            .card-container {
+                max-width: 350px;
+                height: 350px;
+            }
+
+            .section-header h2 {
+                font-size: 52px;
+            }
+
+            .cta h2 {
+                font-size: 52px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 100px 24px 60px;
+            }
+
+            .hero h1 {
+                font-size: 56px;
+                margin-bottom: 24px;
+            }
+
+            .hero-subtitle {
+                font-size: 16px;
+            }
+
+            .hero-buttons {
+                gap: 12px;
+            }
+
+            .btn-hero {
+                padding: 12px 32px;
+                font-size: 12px;
+            }
+
+            .card-container {
+                max-width: 100%;
+                height: 320px;
+            }
+
+            .features, .pricing, .cta {
+                padding: 100px 24px;
+            }
+
+            .section-header h2 {
+                font-size: 40px;
+            }
+
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 480px) {
+            nav {
+                padding: 14px 16px;
+            }
+
+            .hero {
+                padding: 80px 16px 50px;
+                margin-top: 50px;
+            }
+
+            .hero h1 {
+                font-size: 40px;
+                margin-bottom: 20px;
+            }
+
+            .hero-subtitle {
+                font-size: 14px;
+                margin-bottom: 24px;
+            }
+
+            .btn-hero {
+                padding: 12px 24px;
+                font-size: 11px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .card-container {
+                max-width: 100%;
+                height: 280px;
+            }
+
+            .section-header h2 {
+                font-size: 32px;
+            }
+
+            .cta h2 {
+                font-size: 36px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Noise overlay -->
+    <div class="noise-overlay"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">Momentum</div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#">About</a></li>
+            </ul>
+            <div class="nav-buttons">
+                <button class="btn-nav">Sign In</button>
+                <button class="btn-nav">Get Started</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="glow-container">
+            <div class="glow-1" id="glow1"></div>
+            <div class="glow-2"></div>
+            <div class="glow-3"></div>
+        </div>
+
+        <div class="hero-wrapper">
+            <div class="hero-content">
+                <h1>Build unstoppable momentum</h1>
+                <p class="hero-subtitle">Transform your daily habits into lasting results. The most powerful habit tracking system designed for ambitious people.</p>
+
+                <div class="hero-buttons">
+                    <button class="btn-hero btn-hero-primary">Start Free Trial</button>
+                    <button class="btn-hero">View Demo</button>
+                </div>
+            </div>
+            <div class="card-container">
+                <spline-viewer 
+                    url="https://prod.spline.design/b8zYryOWjc-Agzim/scene.splinecode"
+                    style="width:100%; height:100%;">
+                </spline-viewer>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="section-header">
+            <h2>Engineered for excellence</h2>
+            <p>Everything you need to build unbreakable habits and achieve your highest goals</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Visual Analytics</h3>
+                <p>Beautiful, intuitive dashboards that show your progress at a glance. Track trends over time with powerful analytics.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔔</div>
+                <h3>Smart Notifications</h3>
+                <p>Intelligent reminders that learn your patterns. Never miss a habit with reminders that work for your schedule.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🏆</div>
+                <h3>Achievements & Streaks</h3>
+                <p>Build powerful streaks and unlock meaningful achievements. Stay motivated with a reward system that matters.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="section-header">
+            <h2>Simple, transparent pricing</h2>
+            <p>Choose the perfect plan for your journey</p>
+        </div>
+        <div class="pricing-cards">
+            <div class="pricing-card">
+                <h3>Starter</h3>
+                <div class="pricing-price">Free</div>
+                <p class="pricing-period">Forever</p>
+                <ul class="pricing-features">
+                    <li>Up to 5 habits</li>
+                    <li>Basic tracking</li>
+                    <li>Daily reminders</li>
+                    <li>Streak counter</li>
+                </ul>
+                <button class="btn-pricing">Get Started</button>
+            </div>
+            <div class="pricing-card featured">
+                <div class="pricing-badge">Most Popular</div>
+                <h3>Premium</h3>
+                <div class="pricing-price">$9.99</div>
+                <p class="pricing-period">per month</p>
+                <ul class="pricing-features">
+                    <li>Unlimited habits</li>
+                    <li>Advanced analytics</li>
+                    <li>Smart reminders</li>
+                    <li>Custom goals</li>
+                    <li>Priority support</li>
+                </ul>
+                <button class="btn-pricing">Start Free Trial</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="cta-content">
+            <h2>Ready to transform?</h2>
+            <p>Join thousands of people building unstoppable momentum. Start your free trial today—no credit card required.</p>
+            <button class="btn-hero btn-hero-primary">Get Started Free</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Security</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Careers</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Guides</a></li>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Terms</a></li>
+                        <li><a href="#">Cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Momentum. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const glow1 = document.getElementById('glow1');
+        const hero = document.getElementById('hero');
+
+        let mouseX = 0;
+        let mouseY = 0;
+        let currentGlowX = 0;
+        let currentGlowY = 0;
+
+        function updateGlowPosition() {
+            currentGlowX += (mouseX - currentGlowX) * 0.04;
+            currentGlowY += (mouseY - currentGlowY) * 0.04;
+
+            if (glow1) {
+                glow1.style.transform = `translate(calc(-50% + ${currentGlowX * 0.15}px), calc(-50% + ${currentGlowY * 0.15}px))`;
+            }
+        }
+
+        function animate() {
+            updateGlowPosition();
+            requestAnimationFrame(animate);
+        }
+
+        document.addEventListener('mousemove', (e) => {
+            const rect = hero.getBoundingClientRect();
+            mouseX = (e.clientX - rect.left - rect.width / 2) / rect.width * 30;
+            mouseY = (e.clientY - rect.top - rect.height / 2) / rect.height * 30;
+        });
+
+        document.addEventListener('mouseleave', () => {
+            mouseX = 0;
+            mouseY = 0;
+        });
+
+        animate();
+    </script>
+</body>
+</html>
